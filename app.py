@@ -4,10 +4,12 @@ from flask_login import login_required
 from werkzeug.security import generate_password_hash, check_password_hash
 from chatAI import chatAI
 import os
+import json
 
 app = Flask(__name__)
 app.secret_key = "1a42de19d467142abed0171c9cf4e87a"
-users = [{"username": "juan", "password": generate_password_hash("Ingeniero*99")}]
+file = open("users.json","r")
+users = json.loads(file.read())['users']
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 OPENAI_ORG = "org-2t6czCfX79NXhNdPvPzLZauZ"
 chatGPT = chatAI(OPENAI_API_KEY, OPENAI_ORG)

@@ -2,3 +2,4 @@ apisecret.txt
 __pycache__/
 venv/
 .vscode/
+users.json
