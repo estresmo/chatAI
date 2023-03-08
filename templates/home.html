@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>chatbot</title>
+    <style>
+        body{
+            background-color: black;
+        }
+        #divMessages{
+            color:white;
+            background-color: rgba(177, 170, 255, 0.07);
+            text-align: center;
+            height: 80vh;
+            margin-left: 20px;
+            margin-right: 20px;
+            width: calc(100% - 40px);
+            overflow-y: auto;
+        }
+        .clientMsg{
+            text-align: right;
+        }
+        .serverMsg{
+            text-align: left;
+        }
+        #newMessage{
+          width: 99%;
+        }
+        .btn-submit{
+          display: block;
+          right: 50px;
+          position: absolute;
+          width: 75px;
+          height: 30px;
+          background-color: #030344;
+          color: white;
+          border-radius: 20px;
+          border-width: 1.5px;
+          border-color: #443f3f;
+        }
+        #formMessage{
+          margin-left: 20px;
+          margin-right: 20px;
+          width: calc(100% - 40px);
+        }
+        .logout{
+          color: white;
+        }
+        header{
+          width: calc(100% - 40px);
+          text-align: right;
+        }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <a href="/logout" class="logout">Cerrar sesión</a>
+    </header>
+    
+    <div id="divMessages">
+        ¿Que concepto deseas investigar? (al recargar se borra todo)
+    </div>
+    <form action="" method="post" id="formMessage">
+      <textarea name="message" id="newMessage" cols="30" rows="3"></textarea>
+      <input type="button" class="btn-submit" value="Envíar" />
+    </form>
+    
+    <script>
+      const btnSubmit = document.querySelector(".btn-submit")
+      const newMessage = document.getElementById("newMessage")
+      newMessage.addEventListener("keypress", event=>{
+        if(event.key === "Enter"){
+          sendMassge();
+        }
+      })
+      btnSubmit.addEventListener("click", () => {
+        sendMassge();
+      });
+      function sendMassge() {
+        //Loading form data
+        const formMessage = document.getElementById("formMessage");
+        const content = new FormData(formMessage);
+        // Main chat div
+        const divMessages = document.getElementById("divMessages");
+        //Div where user message will be placed
+        const sentMessageDiv = document.createElement("div");
+        //Put message textbox into new div
+        sentMessageDiv.innerText = newMessage.value 
+        newMessage.value  = ""
+        divMessages.appendChild(sentMessageDiv);
+        sentMessageDiv.classList.add("clientMsg")
+        //Create server message div
+        const newDiv = document.createElement("div");
+        newDiv.innerText = "Cargando...";
+        newDiv.classList.add("serverMsg")
+        divMessages.appendChild(newDiv);
+        btnSubmit.disabled = true; 
+        fetch("api/messages/", {
+          body: content,
+          method: "POST",
+        })
+          .then((data) => data.text())
+          .then((data) => {
+            newDiv.innerText = data;
+            btnSubmit.disabled = false; 
+          });
+      }
+    </script>
+  </body>
+</html>
